@@ -15,6 +15,7 @@ String currentStroke = "";                   //Sets up the current stroke
 boolean drawStarted = false;                 //Sets up the drawStarted boolean for shape drawing
 boolean drawStarted2 = false;                //Sets up the drawStarted2 boolean for triangle drawing
 int startX = 0;                              //Sets up the drawing coordinate holders
+PFont font = loadFont("ArialMT-16.vlw");     //Sets the font to ArialMT, size 16
 int startX2 = 0;
 int startY = 0;
 int startY2 = 0;
@@ -147,7 +148,7 @@ void mouseClicked() {
   menuBar1.MenuBarClickedEvent();
 }
 
-void SetColour() {
+void SetColour() {                            // Sets the drawing colour according to the current colour variable
   if (currentColour == "Black") {
     fill(0);
     stroke(0);
@@ -166,18 +167,19 @@ void SetColour() {
   }
 }
 
-void SetStroke() {
+void SetStroke() {                            // Sets the drawing stroke according to the current stroke variable
   if (currentStroke == "Black Stroke") stroke(0);
   else noStroke();
 }
 
-class MenuBar {
+class MenuBar {                               // A class to draw, store and operate the menu structure, using a series of dropdown menus on a bar
   Menu[] menus;
   int menuWidth = 0;
   boolean selected = false;
   boolean hovered, clicked;       //Sets boolean triggers for the menu system
   int currentHover, currentMenu;  //Sets the integer placeholders for the current menu and hover
   
+  //Constructor which creates a new menuBar from a list of menus and item strings and integers
   MenuBar(int NumberOfMenus, int[] NumberOfItems, String[] MenuLabels, String[][] ItemLabels) {
     selected = false;
     menus = new Menu[NumberOfMenus];
@@ -190,6 +192,7 @@ class MenuBar {
     }
   }
   
+  //Handles the menu bar after it is clicked on and calls the DrawMenuBarClicked variable according to where the mouse is
   void MenuBarClicked() {
     int x = 0;
     int i = 0;
@@ -206,13 +209,14 @@ class MenuBar {
     clicked = true;
   }
   
+  // Handles the menu bar when it is clicked on and calls the DrawMenuBarClicked variable according to where the mouse is
   void MenuBarClickedEvent() {
     int x = 0;
     int i = 0;
     clicked = false;
     if (mouseY >= 0 && mouseY <= buttonSizeY) {
         do {
-          if (mouseX <= x + menus[i].buttonWidth) {
+          if (mouseX <= x + menus[i].buttonWidth) {    // Works through each menu button and checks if the mouse is over the button. If so, this is the button that is clicked
               DrawMenuBarClicked(i);
               clicked = true;
           }
@@ -220,7 +224,7 @@ class MenuBar {
           i++;
         } while (clicked == false && i < menus.length);
      }
-     if (clicked == false) {
+     if (clicked == false) {                           // Puts the image from underneath the previous menu back into the canvas
        DrawMenuBar();
        if(currentMenuCoordinates[2] != 0) {
          image(img, currentMenuCoordinates[0], currentMenuCoordinates[1], 
@@ -232,13 +236,14 @@ class MenuBar {
     }
   }
   
-  void MenuHover(){
+  //Handles the mouse hovering over the menu bar and calls the DrawMenuBarHovered function using the correct menu number
+  void MenuHover() {
   int i = 0;
   int x = 0;
   hovered = false;
    if (mouseY >= 0 && mouseY <= buttonSizeY) {
       do {
-        if (mouseX <= x + menus[i].buttonWidth) {
+        if (mouseX <= x + menus[i].buttonWidth) {    // Finds out which button the mouse is hovering over
             DrawMenuBarHovered(i);
             hovered = true;
         }
@@ -246,14 +251,15 @@ class MenuBar {
         i++;
       } while (hovered == false && i < menus.length);
     }
-  if (hovered == false) DrawMenuBar(); 
+  if (hovered == false) DrawMenuBar();               // If not hovering, then draw the normal menu bar
   }
   
+  // Draws the standard menu bar to the canvas
   void DrawMenuBar() {
     int buttonOffsetX = 0;
     currentHover = -1;
+    
     //Sets up the button text font to Arial 16
-    PFont font = loadFont("ArialMT-16.vlw");
     textFont(font, 16);
     
     for(int i = 0; i < menus.length; i++) {
@@ -263,7 +269,7 @@ class MenuBar {
         stroke(0);
         rect(buttonOffsetX, 0, menus[i].buttonWidth, buttonSizeY);
         
-        //Draws the button's label with black font, in the centre of the button#
+        //Draws the button's label with black font, in the centre of the button
         fill(0);
         textSize(16);
         textAlign(CENTER, CENTER);
@@ -272,17 +278,17 @@ class MenuBar {
     }
   }
   
+  Draws the hovered menu bar to the canvas
   void DrawMenuBarHovered(int buttonHovered) {
     int buttonOffsetX = 0;
     currentHover = buttonHovered;
     
     //Sets up the button text font to Arial 16
-    PFont font = loadFont("ArialMT-16.vlw");
     textFont(font, 16);
     
     for(int i = 0; i < menus.length; i++) {
         
-        //Draws a grey button with black outline, with width appropriate for the button text
+        //Draws a grey button with black outline, with width appropriate for the button text. The hovered button is slightly darker
         if (i == buttonHovered) {
           fill(100);
         } else {
@@ -300,17 +306,19 @@ class MenuBar {
     }
   }
   
+  // Draws the menu bar, with the appropriate dropdown menu, to the canvas
   void DrawMenuBarClicked(int buttonClicked) {
     DrawMenuBarHovered(buttonClicked);
     currentHover = buttonClicked;
     currentMenu = buttonClicked;
-    if(currentMenuCoordinates[2] != 0) {
+    
+    if(currentMenuCoordinates[2] != 0) {                                // Puts the previous img from the previous menu back into the canvas
       image(img, currentMenuCoordinates[0], currentMenuCoordinates[1], 
             currentMenuCoordinates[2], currentMenuCoordinates[3]);
     }
     
     int x = 0;
-    for(int i = 0; i < buttonClicked; i++) x += menus[i].buttonWidth;
+    for(int i = 0; i < buttonClicked; i++) x += menus[i].buttonWidth;   // Puts the new canvas section to be covered by the menu into the image store
     img = get(x, buttonSizeY, itemButtonSizeX + 2, (buttonSizeY * (menus[buttonClicked].items.length)) + 2);
     currentMenuCoordinates[0] = x;
     currentMenuCoordinates[1] = buttonSizeY;
@@ -332,20 +340,21 @@ class MenuBar {
     }
   }
   
+  // Handles a menu item being clicked
   void MenuItemClicked(int menuClicked, int itemClicked) {
-     DrawMenuBar();
+     DrawMenuBar();                                                      //Draws the standard menu bar
      if(currentMenuCoordinates[2] != 0) {
-       image(img, currentMenuCoordinates[0], currentMenuCoordinates[1], 
+       image(img, currentMenuCoordinates[0], currentMenuCoordinates[1],  //Puts the saved canvas section back (undraws the dropdown menu
           currentMenuCoordinates[2], currentMenuCoordinates[3]);
        for(int i = 0; i < 4; i++) currentMenuCoordinates[i] = 0;
      }
-     clicked = false;
-     hovered = false;
+     clicked = false;                                                    //Resets all of the menu selection variables
+     hovered = false;  
      drawStarted = false;
      drawStarted2 = false;
      currentHover = -1;
      currentMenu = -1;
-     if(menuClicked == 2) {
+     if(menuClicked == 2) {                                              //Sets the appropriate variable to the item name clicked on
        currentColour = menus[menuClicked].items[itemClicked].text;
      } else if (menuClicked == 3) {
        currentStroke = menus[menuClicked].items[itemClicked].text;
@@ -353,13 +362,14 @@ class MenuBar {
   }
 }
 
+//Holds all of the dropdown menu information
 class Menu {
   String text;
   int buttonWidth;
   boolean selected = false;
   MenuItem[] items;
   
-  Menu(int NumberOfItems, String MenuLabel, String[] ItemLabels) {
+  Menu(int NumberOfItems, String MenuLabel, String[] ItemLabels) {        //Constructor to setup the dropdown menu
     text = MenuLabel;
     buttonWidth = int(textWidth(text)) + 24;
     items = new MenuItem[NumberOfItems];
@@ -369,11 +379,12 @@ class Menu {
   }
 }
 
+//Holds menu item information
 class MenuItem {
   String text;
   boolean selected = false;
   
-  MenuItem(String ItemLabel) {
+  MenuItem(String ItemLabel) {        //Constructor to setup the items
     text = ItemLabel;
   }
 }
