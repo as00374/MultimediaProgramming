@@ -15,7 +15,6 @@ String currentStroke = "";                   //Sets up the current stroke
 boolean drawStarted = false;                 //Sets up the drawStarted boolean for shape drawing
 boolean drawStarted2 = false;                //Sets up the drawStarted2 boolean for triangle drawing
 int startX = 0;                              //Sets up the drawing coordinate holders
-PFont font = loadFont("ArialMT-16.vlw");     //Sets the font to ArialMT, size 16
 int startX2 = 0;
 int startY = 0;
 int startY2 = 0;
@@ -32,6 +31,7 @@ void setup() {
   size(640, 480);
   frameRate(30);
   background(255);
+  
   
   //Defines a menu bar and sets it up, using the MenuBar, Menu and MenuItem classes
   int menuBarLength = 5;
@@ -59,7 +59,9 @@ void draw() {
      PImage saveimg = get(0, buttonSizeY + 4, width, height - buttonSizeY);
      saveimg.save("currentimage.jpg");
      currentState = "";
-   } else if(currentState == "Open") {                                      //If the open button has been clicked, the image 'currentimage.jpg' is imported
+   } else if(currentState == "Open") {
+     //If the open button has been clicked, the image 'currentimage.jpg' is imported
+     background(255);     
      PImage openimg = loadImage("currentimage.jpg");
      image(openimg, 0, buttonSizeY, width, height - buttonSizeY);
      currentState = "";
@@ -260,6 +262,7 @@ class MenuBar {                               // A class to draw, store and oper
     currentHover = -1;
     
     //Sets up the button text font to Arial 16
+    PFont font = loadFont("ArialMT-16.vlw");     //Sets the font to ArialMT, size 16
     textFont(font, 16);
     
     for(int i = 0; i < menus.length; i++) {
@@ -278,12 +281,13 @@ class MenuBar {                               // A class to draw, store and oper
     }
   }
   
-  Draws the hovered menu bar to the canvas
+  //Draws the hovered menu bar to the canvas
   void DrawMenuBarHovered(int buttonHovered) {
     int buttonOffsetX = 0;
     currentHover = buttonHovered;
     
     //Sets up the button text font to Arial 16
+    PFont font = loadFont("ArialMT-16.vlw");     //Sets the font to ArialMT, size 16
     textFont(font, 16);
     
     for(int i = 0; i < menus.length; i++) {
